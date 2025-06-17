@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}个人主页 - 酒店管理系统{% endblock %}
+
+{% block sidebar %}
+<aside class="sidebar">
+  <a href="{{ url_for('dashboard.dashboard_customer') }}" class="is-active"><i class="fas fa-tachometer-alt"></i> 首页</a>
+  <a href="{{ url_for('dashboard.dashboard_customer') }}"><i class="fas fa-users"></i> 个人信息</a>
+  <a href="{{ url_for('dashboard.customer_edit') }}"><i class="fa-solid fa-pencil"></i> 修改信息 </a>
+  <a href="{{ url_for('dashboard.list_hotels') }}"><i class="fas fa-bed"></i> 预订酒店 </a>
+  <a href="{{ url_for('dashboard.view_bookings') }}"><i class="fa-solid fa-list"></i> 我的订单 </a>
+  <a href="{{ url_for('dashboard.change_password', role='customer') }}"><i class="fa-solid fa-list"></i> 修改密码 </a>
+</aside>
+{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div>
+            {% for category, msg in messages %}
+              <div class="notification is-{{ 'danger' if category == 'error' else 'success' }}">
+                {{ msg }}
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+      <h1 class="title is-4">欢迎，{{ customer.customerName }}</h1>
+  
+      <div class="box">
+        <ul>
+          <li><strong><i class="fa-solid fa-envelope"></i>邮箱：</strong>{{ customer.email }}</li>
+          <li><strong><i class="fa-solid fa-phone"></i>电话：</strong>{{ customer.customerPhone }}</li>
+          <li><strong><i class="fa-solid fa-person"></i>年龄：</strong>{{ customer.age }}</li>
+          <li><strong><i class="fa-solid fa-genderless"></i>性别：</strong>{{ customer.sex }}</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+  
+{% endblock %}

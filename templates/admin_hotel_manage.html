@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+
+{% block title %}酒店管理 - 酒店管理系统{% endblock %}
+
+{% block sidebar %}
+<aside class="sidebar">
+  <a href="{{ url_for('dashboard.dashboard_admin') }}" class="is-active"><i class="fas fa-tachometer-alt"></i> 仪表盘</a>
+  <a href="{{ url_for('dashboard.admin_user_manage') }}"><i class="fas fa-users"></i> 用户管理</a>
+  <a href="{{ url_for('dashboard.admin_hotel_manage') }}"><i class="fas fa-bed"></i> 酒店管理 </a>
+  <a href="{{ url_for('dashboard.admin_customer_manage') }}"><i class="fas fa-users"></i> 客户管理</a>
+  <a href="{{ url_for('dashboard.change_password', role='admin') }}"><i class="fa-solid fa-lock"></i> 修改密码 </a>
+</aside>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // 切换批量模式
+    function toggleBatchMode() {
+        const checkboxes = document.querySelectorAll('.batch-checkbox');
+        const batchControls = document.getElementById('batch-controls');
+        const toggleBtn = document.getElementById('toggle-batch-btn');
+
+        const isHidden = checkboxes[0].style.display === 'none';
+        checkboxes.forEach(cb => cb.style.display = isHidden ? 'inline' : 'none');
+        batchControls.style.display = isHidden ? 'block' : 'none';
+        toggleBtn.textContent = isHidden ? '退出批量操作模式' : '进入批量操作模式';
+    }
+
+    function confirmAndSubmit(hotelId) {
+        if (confirm("确认删除该酒店？")) {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/dashboard/admin/delete_hotel/' + hotelId;
+            document.body.appendChild(form);
+            form.submit();
+        }
+    }
+</script>
+{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+      <h1 class="title is-4">酒店管理界面</h1>
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div>
+            {% for category, msg in messages %}
+              <div class="notification is-{{ 'danger' if category == 'error' else 'success' }}">
+                {{ msg }}
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+      <!-- 搜索和筛选 -->
+      <form class="field is-grouped mb-5" method="get">
+        <div class="control is-expanded">
+          <input class="input" type="text" name="search" placeholder="搜索酒店名称" value="{{ search }}">
+        </div>
+        <div class="control">
+          <div class="select">
+            <select name="city">
+              <option value="">所有城市</option>
+              {% for c in cities %}
+                <option value="{{ c }}" {% if selected_city == c %}selected{% endif %}>{{ c }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+        <div class="control">
+          <button class="button is-info" type="submit"><i class="fa-solid fa-magnifying-glass"></i> 搜索</button>
+        </div>
+      </form>
+
+      <!-- 消息提示 -->
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          <div class="notification is-success is-light">
+            {% for message in messages %}
+              <p>{{ message }}</p>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+  
+      <!-- 批量操作按钮 -->
+      <div class="mb-4">
+        <button id="toggle-batch-btn" class="button is-warning is-light" onclick="toggleBatchMode()">进入批量操作模式</button>
+      </div>
+  
+      <!-- 批量删除表单 -->
+      <form method="POST" action="{{ url_for('dashboard.admin_delete_hotels') }}">
+        <table class="table is-fullwidth is-striped is-hoverable is-bordered">
+          <thead>
+            <tr>
+              <th><span class="batch-checkbox" style="display: none;">选择</span></th>
+              <th>酒店ID</th>
+              <th>酒店名</th>
+              <th>所有者ID</th>
+              <th>城市</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for hotel in hotels %}
+            <tr>
+              <td>
+                <input class="batch-checkbox" type="checkbox" name="hotelIds" value="{{ hotel.hotelId }}" style="display: none;">
+              </td>
+              <td>{{ hotel.hotelId }}</td>
+              <td>{{ hotel.hotelName }}</td>
+              <td>{{ hotel.ownerId }}</td>
+              <td>{{ hotel.city }}</td>
+              <td>
+                <button class="button is-small is-danger is-light" type="button" onclick="confirmAndSubmit({{ hotel.hotelId }})">
+                  删除
+                </button>
+                <a href="{{ url_for('dashboard.admin_edit_hotel', hotelId=hotel.hotelId) }}">
+                    <button class="button is-small is-light" type="button">修改信息</button>
+                </a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+  
+        <div id="batch-controls" class="mt-3" style="display: none;">
+          <button class="button is-danger is-light" type="submit" onclick="return confirm('确认批量删除选中的酒店？')">
+            批量删除
+          </button>
+        </div>
+      </form>
+    </div>
+  </section>
+{% endblock %}

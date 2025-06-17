@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}管理权限 - 酒店管理系统{% endblock %}
+
+{% block sidebar %}
+<aside class="sidebar">
+  <a href="{{ url_for('dashboard.dashboard_admin') }}" class="is-active"><i class="fas fa-tachometer-alt"></i> 仪表盘</a>
+  <a href="{{ url_for('dashboard.admin_user_manage') }}"><i class="fas fa-users"></i> 用户管理</a>
+  <a href="{{ url_for('dashboard.admin_hotel_manage') }}"><i class="fas fa-bed"></i> 酒店管理 </a>
+  <a href="{{ url_for('dashboard.admin_customer_manage') }}"><i class="fas fa-users"></i> 客户管理</a>
+  <a href="{{ url_for('dashboard.change_password', role='admin') }}"><i class="fa-solid fa-lock"></i> 修改密码 </a>
+</aside>
+{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+      <h2 class="title is-4">用户 {{ user_id }} 的权限管理</h2>
+  
+      <!-- 闪现消息 -->
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          <div class="notification is-success is-light">
+            {% for message in messages %}
+              <p>{{ message }}</p>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+  
+      <!-- 已有权限 -->
+      <div class="box">
+        <h3 class="subtitle is-5">已有权限：</h3>
+        {% if user_permissions %}
+          <ul>
+            {% for p in user_permissions %}
+              <li class="mb-2">
+                <strong>{{ p.endpoint }}</strong>
+                <form method="POST" action="{{ url_for('dashboard.admin_delete_permission') }}" style="display:inline;">
+                  <input type="hidden" name="userId" value="{{ user_id }}">
+                  <input type="hidden" name="permissionId" value="{{ p.permissionId }}">
+                  <button class="button is-small is-danger is-light" type="submit" onclick="return confirm('确认删除该权限？')">
+                    删除
+                  </button>
+                </form>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="has-text-grey">暂无权限</p>
+        {% endif %}
+      </div>
+  
+      <!-- 添加权限 -->
+      <div class="box">
+        <h3 class="subtitle is-5">添加权限：</h3>
+        <form method="POST" action="{{ url_for('dashboard.admin_add_permission') }}">
+          <input type="hidden" name="userId" value="{{ user_id }}">
+          <div class="field has-addons">
+            <div class="control">
+              <div class="select">
+                <select name="permissionId" required>
+                  {% for perm in all_permissions %}
+                    <option value="{{ perm.permissionId }}">{{ perm.endpoint }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+            <div class="control">
+              <button class="button is-success is-light" type="submit">添加</button>
+            </div>
+          </div>
+        </form>
+      </div>
+  
+      <a class="button is-light" href="{{ url_for('dashboard.dashboard_admin') }}">← 返回用户管理</a>
+    </div>
+  </section>
+  
+{% endblock %}

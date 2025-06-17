@@ -1,0 +1,8 @@
+User(userId, username, password, role)
+Permission(permissionId, endpoint)
+UserPermission(userId, permissionId)
+
+Customer(customerId, customerName, email, customerPhone, age, sex)
+Hotel(hotelId, hotelName, ownerId, city, address, hotelPhone, rating)
+Room(roomId, hotelId, roomType, price, totalNum, available, description)
+Booking(bookingId, customerId, roomId, checkIn, checkOut, totalPrice, status)

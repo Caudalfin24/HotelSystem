@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block title %}订单列表 - 酒店管理系统{% endblock %}
+
+{% block sidebar %}
+<aside class="sidebar">
+  <a href="{{ url_for('dashboard.dashboard_hotel') }}" class="is-active"><i class="fas fa-tachometer-alt"></i> 仪表盘</a>
+  <a href="{{ url_for('dashboard.dashboard_hotel') }}"><i class="fas fa-users"></i> 我的酒店</a>
+  <a href="{{ url_for('dashboard.change_password', role='hotel') }}"><i class="fa-solid fa-lock"></i> 修改密码 </a>
+</aside>
+{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+      <h1 class="title is-3">酒店：{{ hotel.hotelName }} 的订单</h1>
+  
+      <div class="box">
+        <h2 class="title is-5">订单筛选</h2>
+        <form method="get" action="{{ url_for('dashboard.hotel_bookings', hotel_id=hotel.hotelId) }}">
+          <div class="columns is-multiline">
+  
+            <div class="column is-one-third">
+              <div class="field">
+                <label class="label">入住起始日期</label>
+                <div class="control">
+                  <input class="input" type="date" name="checkin_start" value="{{ checkin_start }}">
+                </div>
+              </div>
+            </div>
+  
+            <div class="column is-one-third">
+              <div class="field">
+                <label class="label">入住结束日期</label>
+                <div class="control">
+                  <input class="input" type="date" name="checkin_end" value="{{ checkin_end }}">
+                </div>
+              </div>
+            </div>
+  
+            <div class="column is-one-third">
+              <div class="field">
+                <label class="label">订单状态</label>
+                <div class="control">
+                  <div class="select is-fullwidth">
+                    <select name="status">
+                      <option value="">全部</option>
+                      <option value="notCheckIn" {% if status_filter == 'notCheckIn' %}selected{% endif %}>未入住</option>
+                      <option value="checkIn" {% if status_filter == 'checkIn' %}selected{% endif %}>已入住</option>
+                      <option value="checkOut" {% if status_filter == 'checkOut' %}selected{% endif %}>已退房</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+  
+            <div class="column is-full">
+              <div class="buttons">
+                <button class="button is-primary" type="submit">🔍 筛选</button>
+                <a class="button is-light" href="{{ url_for('dashboard.hotel_bookings', hotel_id=hotel.hotelId) }}">清除筛选</a>
+              </div>
+            </div>
+  
+          </div>
+        </form>
+      </div>
+  
+      {% if bookings %}
+      <div class="table-container">
+        <table class="table is-striped is-hoverable is-bordered is-fullwidth">
+          <thead>
+            <tr>
+              <th>订单编号</th>
+              <th>客户ID</th>
+              <th>房型ID</th>
+              <th>入住时间</th>
+              <th>退房时间</th>
+              <th>总价</th>
+              <th>状态</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for booking in bookings %}
+            <tr>
+              <td>{{ booking.bookingId }}</td>
+              <td>{{ booking.customerId }}</td>
+              <td>{{ booking.roomId }}</td>
+              <td>{{ booking.checkIn }}</td>
+              <td>{{ booking.checkOut }}</td>
+              <td>¥{{ booking.totalPrice }}</td>
+              <td>
+                {% if booking.status == 'notCheckIn' %}
+                  <span class="tag is-warning">未入住</span>
+                {% elif booking.status == 'checkIn' %}
+                  <span class="tag is-info">已入住</span>
+                {% elif booking.status == 'checkOut' %}
+                  <span class="tag is-success">已退房</span>
+                {% else %}
+                  <span class="tag is-light">{{ booking.status }}</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+        <p class="has-text-grey">暂无符合条件的订单。</p>
+      {% endif %}
+  
+      <br>
+      <a class="button is-link is-light" href="{{ url_for('dashboard.hotel_detail', hotel_id=hotel.hotelId) }}">
+        ⬅ 返回酒店详情
+      </a>
+    </div>
+  </section>
+  
+{% endblock %}

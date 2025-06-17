@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block title %}酒店详情 - 酒店管理系统{% endblock %}
+
+{% block sidebar %}
+<aside class="sidebar">
+  <a href="{{ url_for('dashboard.dashboard_hotel') }}" class="is-active"><i class="fas fa-tachometer-alt"></i> 仪表盘</a>
+  <a href="{{ url_for('dashboard.dashboard_hotel') }}"><i class="fas fa-users"></i> 我的酒店</a>
+  <a href="{{ url_for('dashboard.change_password', role='hotel') }}"><i class="fa-solid fa-lock"></i> 修改密码 </a>
+</aside>
+{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div>
+            {% for category, msg in messages %}
+              <div class="notification is-{{ 'danger' if category == 'error' else 'success' }}">
+                {{ msg }}
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+      <h1 class="title is-3">{{ hotel.hotelName }}</h1>
+  
+      <div class="content">
+        <p><strong>城市：</strong>{{ hotel.city }}</p>
+        <p><strong>地址：</strong>{{ hotel.address }}</p>
+        <p><strong>电话：</strong>{{ hotel.hotelPhone }}</p>
+        <p><strong>评分：</strong>{{ hotel.rating }}</p>
+      </div>
+  
+      <div class="buttons">
+        <a class="button is-link" href="{{ url_for('dashboard.edit_hotel', hotel_id=hotel.hotelId) }}"><i class="fa-solid fa-pencil"></i> 修改</a>
+        <form action="{{ url_for('dashboard.delete_hotel', hotel_id=hotel.hotelId) }}" method="post" style="display:inline;" onsubmit="return confirm('确定要删除该酒店吗？');">
+          <button class="button is-danger" type="submit"><i class="fa-solid fa-trash"></i> 删除</button>
+        </form>
+        <a class="button is-light" href="{{ url_for('dashboard.hotel_bookings', hotel_id=hotel.hotelId) }}">查看订单</a>
+        <a class="button is-light" href="{{ url_for('dashboard.dashboard_hotel') }}">返回酒店列表</a>
+      </div>
+  
+      <hr>
+  
+      <h2 class="title is-4">房间信息</h2>
+  
+      <form class="field has-addons" method="get" action="{{ url_for('dashboard.hotel_detail', hotel_id=hotel.hotelId) }}">
+        <div class="control is-expanded">
+          <input class="input" type="text" name="search" placeholder="输入房间类型进行搜索" value="{{ keyword }}">
+        </div>
+        <div class="control">
+          <button class="button is-info" type="submit"><i class="fa-solid fa-magnifying-glass"></i> 搜索</button>
+        </div>
+        {% if keyword %}
+        <div class="control">
+          <a class="button is-light" href="{{ url_for('dashboard.hotel_detail', hotel_id=hotel.hotelId) }}">清除</a>
+        </div>
+        {% endif %}
+      </form>
+  
+      <a class="button is-primary mb-3" href="{{ url_for('dashboard.add_room', hotel_id=hotel.hotelId) }}"><i class="fa-solid fa-plus"></i> 新增房间</a>
+  
+      {% if rooms %}
+      <table class="table is-fullwidth is-striped is-hoverable">
+        <thead>
+          <tr>
+            <th>房间号</th>
+            <th>类型</th>
+            <th>价格 (¥)</th>
+            <th>总数</th>
+            <th>可用</th>
+            <th>描述</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for room in rooms %}
+          <tr>
+            <td>{{ room.roomId }}</td>
+            <td>{{ room.roomType }}</td>
+            <td>{{ room.price }}</td>
+            <td>{{ room.totalNum }}</td>
+            <td>{{ room.available }}</td>
+            <td>{{ room.description }}</td>
+            <td>
+              <div class="buttons are-small">
+                <a class="button is-warning" href="{{ url_for('dashboard.edit_room', hotel_id=hotel.hotelId, room_id=room.roomId) }}"><i class="fa-solid fa-pencil"></i> 编辑</a>
+                <form method="post" action="{{ url_for('dashboard.delete_room', hotel_id=hotel.hotelId, room_id=room.roomId) }}" style="display:inline;" onsubmit="return confirm('确定要删除该房间吗？');">
+                  <button class="button is-danger" type="submit"><i class="fa-solid fa-trash"></i> 删除</button>
+                </form>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <p>暂无房间信息。</p>
+      {% endif %}
+    </div>
+  </section>
+  
+{% endblock %}

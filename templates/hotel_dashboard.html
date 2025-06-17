@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}酒店主页 - 酒店管理系统{% endblock %}
+
+{% block sidebar %}
+<aside class="sidebar">
+  <a href="{{ url_for('dashboard.dashboard_hotel') }}" class="is-active"><i class="fas fa-tachometer-alt"></i> 仪表盘</a>
+  <a href="{{ url_for('dashboard.dashboard_hotel') }}"><i class="fas fa-users"></i> 我的酒店</a>
+  <a href="{{ url_for('dashboard.change_password', role='hotel') }}"><i class="fa-solid fa-lock"></i> 修改密码 </a>
+</aside>
+{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div>
+            {% for category, msg in messages %}
+              <div class="notification is-{{ 'danger' if category == 'error' else 'success' }}">
+                {{ msg }}
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}      
+      <h1 class="title is-4">我的酒店</h1>
+  
+      <a class="button is-primary mb-4" href="{{ url_for('dashboard.add_hotel') }}">
+        新增酒店
+      </a>
+      
+      <!-- 搜索和筛选 -->
+      <form class="field is-grouped mb-5" method="get">
+        <div class="control is-expanded">
+          <input class="input" type="text" name="search" placeholder="搜索酒店名称" value="{{ search }}">
+        </div>
+        <div class="control">
+          <div class="select">
+            <select name="city">
+              <option value="">所有城市</option>
+              {% for c in cities %}
+                <option value="{{ c }}" {% if selected_city == c %}selected{% endif %}>{{ c }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+        <div class="control">
+          <button class="button is-info" type="submit"><i class="fa-solid fa-magnifying-glass"></i> 搜索</button>
+        </div>
+      </form>
+
+      <hr>  
+      {% for hotel in hotels %}
+        <a href="{{ url_for('dashboard.hotel_detail', hotel_id=hotel.hotelId) }}" class="box is-link-hoverable" style="display:block; text-decoration:none; color:inherit;">
+            <div class="card-content">
+              <p class="title is-5 mb-2">{{ hotel.hotelName }}</p>
+              <p><strong>城市：</strong>{{ hotel.city }}</p>
+            </div>
+        </a>
+      {% else %}
+        <p class="has-text-grey">你还没有添加任何酒店。</p>
+      {% endfor %}
+    </div>
+</section>
+  
+{% endblock %}

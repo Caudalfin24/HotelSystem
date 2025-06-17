@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block title %}编辑个人信息 - 酒店管理系统{% endblock %}
+
+{% block sidebar %}
+<aside class="sidebar">
+  <a href="{{ url_for('dashboard.dashboard_admin') }}" class="is-active"><i class="fas fa-tachometer-alt"></i> 仪表盘</a>
+  <a href="{{ url_for('dashboard.admin_user_manage') }}"><i class="fas fa-users"></i> 用户管理</a>
+  <a href="{{ url_for('dashboard.admin_hotel_manage') }}"><i class="fas fa-bed"></i> 酒店管理 </a>
+  <a href="{{ url_for('dashboard.admin_customer_manage') }}"><i class="fas fa-users"></i> 客户管理</a>
+  <a href="{{ url_for('dashboard.change_password', role='admin') }}"><i class="fa-solid fa-lock"></i> 修改密码 </a>
+</aside>
+{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="container">
+    <h1 class="title is-4">编辑个人信息</h1>
+
+    <!-- 闪现消息 -->
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="notification is-success is-light">
+          {% for message in messages %}
+            <p>{{ message }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <form method="post">
+      <div class="field">
+        <label class="label">姓名</label>
+        <div class="control">
+          <input class="input" type="text" name="customerName" value="{{ customer.customerName }}" required>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="label">邮箱</label>
+        <div class="control">
+          <input class="input" type="email" name="email" value="{{ customer.email }}" required>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="label">电话</label>
+        <div class="control">
+          <input class="input" type="text" name="customerPhone" value="{{ customer.customerPhone }}" required>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="label">年龄</label>
+        <div class="control">
+          <input class="input" type="number" name="age" value="{{ customer.age }}" required>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="label">性别</label>
+        <div class="control">
+          <div class="select">
+            <select name="sex" required>
+              <option value="男" {% if customer.sex == '男' %}selected{% endif %}>男</option>
+              <option value="女" {% if customer.sex == '女' %}selected{% endif %}>女</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="field is-grouped mt-4">
+        <div class="control">
+          <button type="submit" class="button is-primary">保存</button>
+        </div>
+        <div class="control">
+          <a class="button is-light" href="{{ url_for('dashboard.admin_customer_manage') }}">取消</a>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>
+
+{% endblock %}

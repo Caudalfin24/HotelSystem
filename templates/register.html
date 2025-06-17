@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}注册 - 酒店管理系统{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container" style="max-width: 400px;">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div>
+            {% for category, msg in messages %}
+              <div class="notification is-{{ 'danger' if category == 'error' else 'success' }}">
+                {{ msg }}
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+      <h2 class="title is-4">注册新用户</h2>
+  
+      <form method="post">
+        <div class="field">
+          <label class="label">用户名</label>
+          <div class="control">
+            <input class="input" type="text" name="username" placeholder="请输入用户名" required>
+          </div>
+        </div>
+  
+        <div class="field">
+          <label class="label">密码</label>
+          <div class="control">
+            <input class="input" type="password" name="password" placeholder="请输入密码" required>
+          </div>
+        </div>
+  
+        <div class="field">
+          <label class="label">角色</label>
+          <div class="control">
+            <div class="select is-fullwidth">
+              <select name="role" required>
+                <option value="customer">客户</option>
+                <option value="hotel">酒店方</option>
+                <!-- <option value="admin">管理员</option> -->
+              </select>
+            </div>
+          </div>
+        </div>
+  
+        <div class="field">
+          <div class="control">
+            <button class="button is-primary" type="submit">注册</button>
+          </div>
+        </div>
+      </form>
+  
+      <div class="mt-4">
+        <a href="{{ url_for('auth.index') }}">返回首页</a>
+      </div>
+    </div>
+  </section>
+  
+{% endblock %}

@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}预订酒店 - 酒店管理系统{% endblock %}
+
+{% block sidebar %}
+<aside class="sidebar">
+  <a href="{{ url_for('dashboard.dashboard_customer') }}" class="is-active"><i class="fas fa-tachometer-alt"></i> 首页</a>
+  <a href="{{ url_for('dashboard.dashboard_customer') }}"><i class="fas fa-users"></i> 个人信息</a>
+  <a href="{{ url_for('dashboard.customer_edit') }}"><i class="fa-solid fa-pencil"></i> 修改信息 </a>
+  <a href="{{ url_for('dashboard.list_hotels') }}"><i class="fas fa-bed"></i> 预订酒店 </a>
+  <a href="{{ url_for('dashboard.view_bookings') }}"><i class="fa-solid fa-list"></i> 我的订单 </a>
+  <a href="{{ url_for('dashboard.change_password', role='customer') }}"><i class="fa-solid fa-list"></i> 修改密码 </a>
+</aside>
+{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div>
+            {% for category, msg in messages %}
+              <div class="notification is-{{ 'danger' if category == 'error' else 'success' }}">
+                {{ msg }}
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+      <h1 class="title is-3">酒店列表</h1>
+  
+      <!-- 搜索和筛选 -->
+      <form class="field is-grouped mb-5" method="get">
+        <div class="control is-expanded">
+          <input class="input" type="text" name="search" placeholder="搜索酒店名称" value="{{ search }}">
+        </div>
+        <div class="control">
+          <div class="select">
+            <select name="city">
+              <option value="">所有城市</option>
+              {% for c in cities %}
+                <option value="{{ c }}" {% if selected_city == c %}selected{% endif %}>{{ c }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+        <div class="control">
+          <button class="button is-info" type="submit"><i class="fa-solid fa-magnifying-glass"></i> 搜索</button>
+        </div>
+      </form>
+  
+      <hr>
+  
+      {% if hotels %}
+        <div class="columns is-multiline">
+          {% for hotel in hotels %}
+          <div class="column is-half">
+            <div class="card">
+              <div class="card-content">
+                <p class="title is-4">{{ hotel.hotelName }}</p>
+                <p><strong>城市：</strong>{{ hotel.city }}</p>
+                <p><strong>地址：</strong>{{ hotel.address }}</p>
+                <p><strong>联系电话：</strong>{{ hotel.hotelPhone }}</p>
+                <p><strong>评分：</strong>{{ hotel.rating }}</p>
+              </div>
+              <footer class="card-footer">
+                <a href="{{ url_for('dashboard.book_hotel', hotel_id=hotel.hotelId) }}" class="card-footer-item has-text-link"><i class="fa-solid fa-calendar"></i> 预订</a>
+              </footer>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="has-text-grey">没有找到符合条件的酒店。</p>
+      {% endif %}
+    </div>
+  </section>
+  
+
+{% endblock %}

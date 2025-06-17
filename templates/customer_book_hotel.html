@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}预订酒店 - 酒店管理系统{% endblock %}
+
+{% block sidebar %}
+<aside class="sidebar">
+  <a href="{{ url_for('dashboard.dashboard_customer') }}" class="is-active"><i class="fas fa-tachometer-alt"></i> 首页</a>
+  <a href="{{ url_for('dashboard.dashboard_customer') }}"><i class="fas fa-users"></i> 个人信息</a>
+  <a href="{{ url_for('dashboard.customer_edit') }}"><i class="fa-solid fa-pencil"></i> 修改信息 </a>
+  <a href="{{ url_for('dashboard.list_hotels') }}"><i class="fas fa-bed"></i> 预订酒店 </a>
+  <a href="{{ url_for('dashboard.view_bookings') }}"><i class="fa-solid fa-list"></i> 我的订单 </a>
+  <a href="{{ url_for('dashboard.change_password', role='customer') }}"><i class="fa-solid fa-list"></i> 修改密码 </a>
+</aside>
+{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div>
+            {% for category, msg in messages %}
+              <div class="notification is-{{ 'danger' if category == 'error' else 'success' }}">
+                {{ msg }}
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+      <h1 class="title is-3">预订：{{ hotel.hotelName }}</h1>
+  
+      <form method="post" class="box">
+        <!-- 房型选择 -->
+        <div class="field">
+          <label class="label">选择房型</label>
+          <div class="control">
+            <div class="select is-fullwidth">
+              <select name="room_id" required>
+                {% for room in rooms %}
+                  <option value="{{ room.roomId }}">
+                    {{ room.roomType }} - ¥{{ room.price }} - 剩余：{{ room.available }}
+                  </option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+        </div>
+  
+        <!-- 入住日期 -->
+        <div class="field">
+          <label class="label">入住日期</label>
+          <div class="control">
+            <input class="input" type="date" name="check_in" required min="{{ current_date }}">
+          </div>
+        </div>
+  
+        <!-- 退房日期 -->
+        <div class="field">
+          <label class="label">退房日期</label>
+          <div class="control">
+            <input class="input" type="date" name="check_out" required min="{{ current_date }}">
+          </div>
+        </div>
+  
+        <!-- 提交按钮 -->
+        <div class="field mt-4">
+          <div class="control">
+            <button class="button is-primary is-fullwidth" type="submit"><i class="fa-solid fa-check"></i> 确认预订</button>
+          </div>
+        </div>
+      </form>
+  
+      <a href="{{ url_for('dashboard.list_hotels', hotel_id=hotel.hotelId) }}"><i class="fa-solid fa-backward"></i> 返回酒店预定</a>
+    </div>
+  </section>
+  
+{% endblock %}

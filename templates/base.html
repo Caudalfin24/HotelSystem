@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>{% block title %}酒店管理系统{% endblock %}</title>
+
+    <!-- Bulma CSS CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css" />
+    
+    <!-- FontAwesome 图标 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    
+    <style>
+        /* 简单固定侧边栏 */
+        html, body {
+            height: 100%;
+        }
+        .sidebar {
+            height: 100vh;
+            width: 220px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: #00d1b2;
+            padding-top: 1rem;
+            color: white;
+        }
+        .sidebar a {
+            color: white;
+            display: block;
+            padding: 0.75rem 1.25rem;
+            font-weight: 600;
+        }
+        .sidebar a.is-active, .sidebar a:hover {
+            background-color: #00b89c;
+            color: white;
+            text-decoration: none;
+        }
+        .main-content {
+            margin-left: 220px;
+            padding: 2rem;
+        }
+        .sidebar {
+            margin-top: 3.25rem;
+        }
+        .is-fixed-top {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 999;
+            background-color: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+          }
+    </style>
+
+    {% block extra_css %}{% endblock %}
+    {% block scripts %}{% endblock %}
+
+</head>
+<body>
+
+<!-- 顶部导航栏 -->
+<nav class="navbar is-light is-fixed-top" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+        <a class="navbar-item" href="{{ url_for('auth.index') }}">
+        🏨 酒店管理系统
+        </a>
+    </div>
+
+    <div class="navbar-menu">
+        <div class="navbar-start">
+        </div>
+
+        <div class="navbar-end">
+            {% if session.get('userId') %}
+                <div class="navbar-item">
+                    欢迎，{{ session.get('username') }}
+                </div>
+                <div class="navbar-item">
+                <form action="{{ url_for('auth.logout') }}" method="post">
+                    <button class="button is-danger is-light" type="submit">登出</button>
+                </form>
+                </div>
+            {% else %}
+                <div class="navbar-item">
+                    <a class="button is-primary" href="{{ url_for('auth.index') }}">登录</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</nav>
+
+    {% block sidebar %}
+    {% endblock %}
+
+    <section class="main-content">
+        {% block content %}{% endblock %}
+    </section>
+
+    <footer class="footer has-background-light has-text-centered mt-5 py-3">
+        <div>酒店管理系统 &copy; 2025</div>
+    </footer>
+
+</body>
+</html>

@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}新增酒店 - 酒店管理系统{% endblock %}
+
+{% block sidebar %}
+<aside class="sidebar">
+  <a href="{{ url_for('dashboard.dashboard_hotel') }}" class="is-active"><i class="fas fa-tachometer-alt"></i> 仪表盘</a>
+  <a href="{{ url_for('dashboard.dashboard_hotel') }}"><i class="fas fa-users"></i> 我的酒店</a>
+  <a href="{{ url_for('dashboard.change_password', role='hotel') }}"><i class="fa-solid fa-lock"></i> 修改密码 </a>
+</aside>
+{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div>
+            {% for category, msg in messages %}
+              <div class="notification is-{{ 'danger' if category == 'error' else 'success' }}">
+                {{ msg }}
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}      
+      <h1 class="title is-4">新增酒店</h1>
+  
+      <form method="post">
+        <div class="field">
+          <label class="label" for="hotelName">酒店名称</label>
+          <div class="control">
+            <input class="input" type="text" name="hotelName" id="hotelName" required>
+          </div>
+        </div>
+  
+        <div class="field">
+          <label class="label" for="city">城市</label>
+          <div class="control">
+            <input class="input" type="text" name="city" id="city" required>
+          </div>
+        </div>
+  
+        <div class="field">
+          <label class="label" for="address">地址</label>
+          <div class="control">
+            <input class="input" type="text" name="address" id="address" required>
+          </div>
+        </div>
+  
+        <div class="field">
+          <label class="label" for="hotelPhone">电话</label>
+          <div class="control">
+            <input class="input" type="text" name="hotelPhone" id="hotelPhone" required>
+          </div>
+        </div>
+  
+        <div class="field">
+          <label class="label" for="rating">评级（0~5）</label>
+          <div class="control">
+            <input class="input" type="number" name="rating" id="rating" min="0" max="5" required>
+          </div>
+        </div>
+  
+        <div class="field is-grouped">
+          <div class="control">
+            <button type="submit" class="button is-primary">提交</button>
+          </div>
+          <div class="control">
+            <a href="{{ url_for('dashboard.dashboard_hotel') }}" class="button is-light">返回酒店列表</a>
+          </div>
+        </div>
+      </form>
+    </div>
+  </section>
+  
+{% endblock %}

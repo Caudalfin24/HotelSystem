@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}编辑房间 - 酒店管理系统{% endblock %}
+
+{% block sidebar %}
+<aside class="sidebar">
+  <a href="{{ url_for('dashboard.dashboard_hotel') }}" class="is-active"><i class="fas fa-tachometer-alt"></i> 仪表盘</a>
+  <a href="{{ url_for('dashboard.dashboard_hotel') }}"><i class="fas fa-users"></i> 我的酒店</a>
+  <a href="{{ url_for('dashboard.customer_edit') }}"><i class="fas fa-bed"></i> 修改信息 </a>
+</aside>
+{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div>
+            {% for category, msg in messages %}
+              <div class="notification is-{{ 'danger' if category == 'error' else 'success' }}">
+                {{ msg }}
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+      <h1 class="title is-4">编辑房间 - 酒店：{{ hotel.hotelName }}</h1>
+  
+      <form method="post">
+        <div class="field">
+          <label class="label">房间类型</label>
+          <div class="control">
+            <input class="input" type="text" name="roomType" value="{{ room.roomType }}" required>
+          </div>
+        </div>
+  
+        <div class="field">
+          <label class="label">价格 (¥)</label>
+          <div class="control">
+            <input class="input" type="number" name="price" step="0.01" value="{{ room.price }}" required>
+          </div>
+        </div>
+  
+        <div class="field">
+          <label class="label">总数</label>
+          <div class="control">
+            <input class="input" type="number" name="totalNum" value="{{ room.totalNum }}" required>
+          </div>
+        </div>
+  
+        <div class="field">
+          <label class="label">描述</label>
+          <div class="control">
+            <textarea class="textarea" name="description">{{ room.description }}</textarea>
+          </div>
+        </div>
+  
+        <div class="field is-grouped">
+          <div class="control">
+            <button class="button is-primary" type="submit">保存修改</button>
+          </div>
+          <div class="control">
+            <a class="button is-light" href="{{ url_for('dashboard.hotel_detail', hotel_id=hotel.hotelId) }}">⬅ 返回详情页</a>
+          </div>
+        </div>
+      </form>
+    </div>
+  </section>
+  
+{% endblock %}
